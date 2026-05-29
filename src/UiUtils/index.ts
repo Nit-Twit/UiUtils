@@ -9,7 +9,7 @@
 // │  ╚██████╔╝██║╚██████╔╝   ██║   ██║███████╗███████║  │
 // │   ╚═════╝ ╚═╝ ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝  │
 // │                                                     │
-// │                      v2.2.3                         │
+// │                      v3.1.0                         │
 // │            Various tools for UI Design              │
 // │   Developed and maintained by Pandaerock/NitTwit_   │
 // │                                                     │
@@ -327,6 +327,28 @@ export class UiUtils {
 		UiUtils.collectChildren(this.instance, tag, results);
 
 		return results;
+	}
+
+	/**
+	 * Searchs every roblox Instance under PlayerGui for a given CollectionService tag
+	 * and returns either it's wrapper or a new UiUtils wrapper.
+	 * @param tag - The CollectionService tag to search for.
+	 * @returns An array of `UiUtils` wrappers, all containing the given CollectionService tag
+	 */
+	public fromTagged(tag: string) {
+		const player = game.GetService("Players").LocalPlayer;
+		const playerGui = player.WaitForChild("PlayerGui") as PlayerGui;
+		let temp = new Map<Instance, UiUtils>();
+
+		const register = (inst: Instance) => {
+			if (inst.IsDescendantOf(playerGui) && inst.IsA("GuiObject")) {
+				temp.set(inst, UiUtils.from(inst));
+			}
+		};
+
+		CollectionService.GetTagged(tag).forEach(register);
+
+		return temp;
 	}
 
 	/**
