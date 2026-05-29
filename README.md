@@ -15,19 +15,27 @@ npm install @rbxts/uiutils
 Pending an invite to the @rbxts organization. In the meantime, you can install it manually:
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/Nit-Twit/UiUtils/tree/master
 ```
+
 ### 2. Run the roblox-ts compiler
+
 ```bash
 npm run watch
 ```
+
 ### 3. Bundle the source code
+
 ```bash
 npm pack
 ```
+
 ### 4. Navigate to your project's root directory
+
 ### 5. Install bundled package
+
 ```bash
 npm i <PATH TO PACKAGE>.tar.gz
 ```
@@ -97,10 +105,11 @@ registerTagged("UiUtils");
 
 #### Traversal
 
-| Method              | Description                                                                  |
-| ------------------- | ---------------------------------------------------------------------------- |
-| `fromChild(name)`   | Find and wrap a direct child by name                                         |
-| `fromChildren(tag)` | Recursively find and wrap all descendants with a given CollectionService tag |
+| Method              | Description                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------- |
+| `fromChild(name)`   | Find and wrap a direct child by name                                                              |
+| `fromChildren(tag)` | Recursively find and wrap all descendants with a given<br> CollectionService tag                  |
+| `fromTagged(tag)`   | Find any `GuiObject` that has a given CollectionService<br>tag. Returns a Map of UiUtils wrappers |
 
 #### Visibility & Opacity
 
