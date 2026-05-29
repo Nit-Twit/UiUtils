@@ -14,30 +14,14 @@ npm install @rbxts/uiutils
 
 Pending an invite to the @rbxts organization. In the meantime, you can install it manually:
 
-### 1. Clone the repository
+### 1. Download the bundled package from the [releases](https://github.com/Nit-Twit/UiUtils/releases/) page
+
+### 2. Navigate to your project's root directory
+
+### 4. Install bundled package
 
 ```bash
-git clone https://github.com/Nit-Twit/UiUtils/tree/master
-```
-
-### 2. Run the roblox-ts compiler
-
-```bash
-npm run watch
-```
-
-### 3. Bundle the source code
-
-```bash
-npm pack
-```
-
-### 4. Navigate to your project's root directory
-
-### 5. Install bundled package
-
-```bash
-npm i <PATH TO PACKAGE>.tar.gz
+npm i <PATH TO PACKAGE>.tgz
 ```
 
 Apologies for the inconvenience. this is the best available option until the package is published.
