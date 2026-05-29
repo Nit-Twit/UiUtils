@@ -1,0 +1,36 @@
+{
+  "name": "@rbxts/uiutils",
+  "version": "2.2.3",
+  "description": "A fluent GuiObject wrapper with tweens, opacity, events, and a global registry. Manage and access any UI instance from anywhere on the client.",
+  "main": "out/UiUtils/init.lua",
+  "scripts": {
+    "build": "rbxtsc",
+    "watch": "rbxtsc -w",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [],
+  "author": "nittwit_",
+  "license": "ISC",
+  "type": "commonjs",
+  "types": "out/UiUtils/index.d.ts",
+  "files": [
+    "out",
+    "!**/*.tsbuildinfo"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "^3.0.0-types.0",
+    "@rbxts/types": "^1.0.924",
+    "@typescript-eslint/eslint-plugin": "^8.60.0",
+    "@typescript-eslint/parser": "^8.60.0",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-roblox-ts": "^1.4.0",
+    "prettier": "^3.8.3",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.9.3"
+  }
+}
