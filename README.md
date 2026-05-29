@@ -10,7 +10,19 @@
 npm install @rbxts/uiutils
 ```
 
----
+### ⚠️ Not yet on npm (as of 05-29-2026)
+
+Pending an invite to the @rbxts organization. In the meantime, you can install it manually:
+
+1. Clone the repository
+2. Run the roblox-ts compiler
+3. Run `npm pack` to bundle the source
+4. Navigate to your project's root directory
+5. Run `npm i <PATH-TO-PACKAGE>.tar.gz` to install locally
+
+Apologies for the inconvenience. this is the best available option until the package is published.
+
+##
 
 ## Features
 
@@ -31,7 +43,7 @@ import { UiUtils } from "@rbxts/uiutils";
 const button = UiUtils.from(someGuiObject);
 
 button.onClick.Connect(() => {
-    print("Clicked!");
+	print("Clicked!");
 });
 
 button.fadeIn();
@@ -44,6 +56,7 @@ button.fadeIn();
 ### Static Methods
 
 #### `UiUtils.from(inst: GuiObject): UiUtils`
+
 Returns an existing wrapper for the instance, or creates a new one. This is the primary way to get a `UiUtils` instance.
 
 ```ts
@@ -51,6 +64,7 @@ const ui = UiUtils.from(myFrame);
 ```
 
 #### `UiUtils.fromName(name: string): UiUtils | undefined`
+
 Searches the **global registry** for a wrapped instance by name. Polls for up to ~5 seconds before timing out.
 
 ```ts
@@ -58,6 +72,7 @@ const hud = UiUtils.fromName("HudFrame");
 ```
 
 #### `registerTagged(tag: string)`
+
 Auto-wraps all current and future `GuiObject`s with the given CollectionService tag under `PlayerGui`.
 
 ```ts
@@ -70,55 +85,55 @@ registerTagged("UiUtils");
 
 #### Traversal
 
-| Method | Description |
-|--------|-------------|
-| `fromChild(name)` | Find and wrap a direct child by name |
+| Method              | Description                                                                  |
+| ------------------- | ---------------------------------------------------------------------------- |
+| `fromChild(name)`   | Find and wrap a direct child by name                                         |
 | `fromChildren(tag)` | Recursively find and wrap all descendants with a given CollectionService tag |
 
 #### Visibility & Opacity
 
-| Method | Description |
-|--------|-------------|
-| `setVisible(val)` | Show or hide the instance |
-| `isVisible()` | Returns current visibility |
+| Method            | Description                                                 |
+| ----------------- | ----------------------------------------------------------- |
+| `setVisible(val)` | Show or hide the instance                                   |
+| `isVisible()`     | Returns current visibility                                  |
 | `setOpacity(val)` | Recursively set transparency (0 = visible, 1 = transparent) |
 
 #### Tweening
 
-| Method | Description |
-|--------|-------------|
-| `fadeIn(maxOpacity?, tweenInfo?)` | Tween from transparent to visible |
-| `fadeOut(tweenInfo?)` | Tween from visible to transparent, then hide |
-| `fadeColor(color, tweenInfo?)` | Tween `BackgroundColor3` to a target color |
-| `slide(position, tweenInfo?)` | Tween `Position` to a target `UDim2` |
-| `transformScale(size, tweenInfo?)` | Tween `Size` to a target `UDim2` |
+| Method                             | Description                                  |
+| ---------------------------------- | -------------------------------------------- |
+| `fadeIn(maxOpacity?, tweenInfo?)`  | Tween from transparent to visible            |
+| `fadeOut(tweenInfo?)`              | Tween from visible to transparent, then hide |
+| `fadeColor(color, tweenInfo?)`     | Tween `BackgroundColor3` to a target color   |
+| `slide(position, tweenInfo?)`      | Tween `Position` to a target `UDim2`         |
+| `transformScale(size, tweenInfo?)` | Tween `Size` to a target `UDim2`             |
 
 All tween methods default to `0.25s Cubic Out` and return the playing `Tween`.
 
 #### Setters
 
-| Method | Description |
-|--------|-------------|
-| `setPosition(pos)` | Set `Position` |
-| `setSize(size)` | Set `Size` |
-| `setText(text)` | Set `Text` (TextLabel, TextButton, TextBox only) |
-| `setImage(imageId)` | Set `Image`, auto-prepends `rbxassetid://` if needed |
-| `setImageColor(color)` | Set `ImageColor3` |
-| `setBackgroundColor(color)` | Set `BackgroundColor3` |
-| `setAttribute(key, value)` | Set a custom instance attribute |
+| Method                      | Description                                          |
+| --------------------------- | ---------------------------------------------------- |
+| `setPosition(pos)`          | Set `Position`                                       |
+| `setSize(size)`             | Set `Size`                                           |
+| `setText(text)`             | Set `Text` (TextLabel, TextButton, TextBox only)     |
+| `setImage(imageId)`         | Set `Image`, auto-prepends `rbxassetid://` if needed |
+| `setImageColor(color)`      | Set `ImageColor3`                                    |
+| `setBackgroundColor(color)` | Set `BackgroundColor3`                               |
+| `setAttribute(key, value)`  | Set a custom instance attribute                      |
 
 #### Getters
 
-| Method | Description |
-|--------|-------------|
-| `getPosition()` | Get current `Position` |
-| `getSize()` | Get current `Size` |
-| `getText()` | Get `Text` (TextLabel, TextButton, TextBox only) |
-| `getAttribute(key)` | Get a custom instance attribute |
-| `getAbsolutePosition()` | Get absolute screen position as `Vector2` |
-| `getAbsoluteSize()` | Get absolute screen size as `Vector2` |
-| `getChildInstance(name)` | `WaitForChild` wrapper |
-| `getInstance()` | Returns the underlying `GuiObject` |
+| Method                   | Description                                      |
+| ------------------------ | ------------------------------------------------ |
+| `getPosition()`          | Get current `Position`                           |
+| `getSize()`              | Get current `Size`                               |
+| `getText()`              | Get `Text` (TextLabel, TextButton, TextBox only) |
+| `getAttribute(key)`      | Get a custom instance attribute                  |
+| `getAbsolutePosition()`  | Get absolute screen position as `Vector2`        |
+| `getAbsoluteSize()`      | Get absolute screen size as `Vector2`            |
+| `getChildInstance(name)` | `WaitForChild` wrapper                           |
+| `getInstance()`          | Returns the underlying `GuiObject`               |
 
 #### Events
 
@@ -140,13 +155,13 @@ ui.destroy(); // Disconnects all events, removes from registry, and destroys the
 
 You can control recursive opacity behavior with CollectionService tags:
 
-| Tag | Effect |
-|-----|--------|
-| `__uiutils.nofade` | Excludes an instance and its descendants from opacity changes |
-| `__uiutils.fadethis` | Forces opacity on ImageButtons (background included) |
+| Tag                  | Effect                                                        |
+| -------------------- | ------------------------------------------------------------- |
+| `__uiutils.nofade`   | Excludes an instance and its descendants from opacity changes |
+| `__uiutils.fadethis` | Forces opacity on ImageButtons (background included)          |
 
 ---
 
 ## License
 
-MIT — Developed and maintained by **Pandaerock / NitTwit_**
+MIT — Developed and maintained by **Pandaerock / NitTwit\_**
