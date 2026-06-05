@@ -9,7 +9,7 @@
 // │  ╚██████╔╝██║╚██████╔╝   ██║   ██║███████╗███████║  │
 // │   ╚═════╝ ╚═╝ ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝  │
 // │                                                     │
-// │                      v3.1.0                         │
+// │                      v3.1.2                         │
 // │            Various tools for UI Design              │
 // │   Developed and maintained by Pandaerock/NitTwit_   │
 // │                                                     │
@@ -143,12 +143,26 @@ export class UiUtils {
 	 * Respects `__uiutils.nofade` and `__uiutils.fadethis` tags.
 	 * @param inst - The root instance.
 	 * @param val - Transparency value (0 = fully visible, 1 = fully transparent).
-	 * @param ignoreBackground - If `true`, skips background transparency on ImageLabels/Buttons. Defaults to `true`.
+	 * @param ignoreBackground - If `true`, skips background transparency on Images/Text. Defaults to `true`.
 	 */
-	private setOpacityRecurse(inst: Instance, val: number, ignoreBackground: boolean = true) {
+	private setOpacityRecurse(inst: Instance, val: number, t: "out" | "in" | "single", ignoreBackground: boolean = true) {
 		if (this.destroyed) return;
+
+		if (t === "out") {
+			const maxOpacity = inst.GetAttribute("__uiutils.maxOpacity") as number || 1
+			if (val >= maxOpacity) {
+				return;
+			}
+		} else if (t === "in") {
+			const minOpacity = inst.GetAttribute("__uiutils.minOpacity") as number || 0
+			if (val <= minOpacity) {
+				return;
+			}
+		}
+
 		const noFade = inst.HasTag("__uiutils.nofade");
 		const shouldFade = inst.HasTag("__uiutils.fadethis");
+		const textOnly = inst.HasTag("__uiutils.textOnly");
 
 		const isGuiObject = inst.IsA("GuiObject");
 		const isImageLabel = inst.IsA("ImageLabel");
@@ -156,27 +170,27 @@ export class UiUtils {
 		const isTextLabel = inst.IsA("TextLabel");
 		const isTextButton = inst.IsA("TextButton");
 
-		const shouldIgnoreBackgroundFade = ignoreBackground && (isImageLabel || (isImageButton && !shouldFade));
+		const shouldIgnoreBackgroundFade =
+			ignoreBackground && (isImageLabel || isImageButton || isTextLabel || isTextButton) && !shouldFade;
 		if (!noFade) {
-			if (isGuiObject && !shouldIgnoreBackgroundFade) {
+			if (isGuiObject && !shouldIgnoreBackgroundFade && !textOnly) {
 				inst.BackgroundTransparency = val;
 			}
 
 			if (isTextLabel || isTextButton) {
-				inst.TextStrokeTransparency = val;
 				inst.TextTransparency = val;
 			}
 
-			if (isImageLabel || isImageButton) inst.ImageTransparency = val;
+			if ((isImageLabel || isImageButton) && !textOnly) inst.ImageTransparency = val;
 
 			const stroke = inst.FindFirstChildOfClass("UIStroke");
-			if (stroke) stroke.Transparency = val;
+			if (stroke && !textOnly) stroke.Transparency = val;
 		}
 
 		const children = inst.GetChildren();
 
 		children.forEach((child) => {
-			this.setOpacityRecurse(child, val);
+			this.setOpacityRecurse(child, val, t);
 		});
 	}
 
@@ -335,18 +349,21 @@ export class UiUtils {
 	 * @param tag - The CollectionService tag to search for.
 	 * @returns An array of `UiUtils` wrappers, all containing the given CollectionService tag
 	 */
-	public fromTagged(tag: string) {
+	public static fromTagged(tag: string): Array<UiUtils> {
 		const player = game.GetService("Players").LocalPlayer;
 		const playerGui = player.WaitForChild("PlayerGui") as PlayerGui;
-		let temp = new Map<Instance, UiUtils>();
+		let temp: Array<UiUtils> = [];
 
 		const register = (inst: Instance) => {
 			if (inst.IsDescendantOf(playerGui) && inst.IsA("GuiObject")) {
-				temp.set(inst, UiUtils.from(inst));
+				temp.push(UiUtils.from(inst));
 			}
 		};
 
-		CollectionService.GetTagged(tag).forEach(register);
+		const tagged = CollectionService.GetTagged(tag) as GuiObject[]
+		for (let i = 0; i < tagged.size(); i++) {
+			register(tagged[i])
+		}
 
 		return temp;
 	}
@@ -371,7 +388,7 @@ export class UiUtils {
 	 * @param val - Transparency value (0 = fully visible, 1 = fully transparent).
 	 */
 	public setOpacity(val: number) {
-		this.setOpacityRecurse(this.instance, val);
+		this.setOpacityRecurse(this.instance, val, "single");
 	}
 
 	/**
@@ -395,7 +412,7 @@ export class UiUtils {
 		});
 
 		const c = proxy.GetPropertyChangedSignal("Value").Connect(() => {
-			this.setOpacityRecurse(this.instance, proxy.Value);
+			this.setOpacityRecurse(this.instance, proxy.Value, "in");
 		});
 
 		tween.Completed.Connect(() => {
@@ -423,7 +440,7 @@ export class UiUtils {
 		});
 
 		const c = proxy.GetPropertyChangedSignal("Value").Connect(() => {
-			this.setOpacityRecurse(this.instance, proxy.Value);
+			this.setOpacityRecurse(this.instance, proxy.Value, "out");
 		});
 
 		tween.Completed.Connect(() => {
@@ -579,13 +596,13 @@ export class UiUtils {
 	}
 
 	/** @returns The current `Position` of the instance. */
-	public getPosition() {
-		return this.getProperty("Position");
+	public getPosition(): UDim2 {
+		return this.getProperty("Position") as UDim2;
 	}
 
 	/** @returns The current `Size` of the instance. */
-	public getSize() {
-		return this.getProperty("Size");
+	public getSize(): UDim2 {
+		return this.getProperty("Size") as UDim2;
 	}
 
 	/**
@@ -593,8 +610,8 @@ export class UiUtils {
 	 * @param key - The attribute name.
 	 * @returns The attribute value.
 	 */
-	public getAttribute(key: string) {
-		return this.instance.GetAttribute(key);
+	public getAttribute(key: string): AttributeValue {
+		return this.instance.GetAttribute(key) as AttributeValue;
 	}
 
 	/**
@@ -602,21 +619,21 @@ export class UiUtils {
 	 * Only valid for TextLabel, TextButton, or TextBox.
 	 * @returns The text string.
 	 */
-	public getText() {
+	public getText(): string {
 		if (!(this.instance.IsA("TextLabel") || this.instance.IsA("TextButton") || this.instance.IsA("TextBox"))) {
 			return error(`❌ UIUTILS — Given instance ${this.instance} does not contain a text property`);
 		}
 
-		return this.getProperty("Text");
+		return this.getProperty("Text") as string;
 	}
 
 	/** @returns The absolute screen position of the instance as a `Vector2`. */
-	public getAbsolutePosition() {
+	public getAbsolutePosition(): Vector2 {
 		return this.instance.AbsolutePosition;
 	}
 
 	/** @returns The absolute screen size of the instance as a `Vector2`. */
-	public getAbsoluteSize() {
+	public getAbsoluteSize(): Vector2 {
 		return this.instance.AbsoluteSize;
 	}
 
@@ -625,12 +642,12 @@ export class UiUtils {
 	 * @param name - The child name to wait for.
 	 * @returns The child `Instance`.
 	 */
-	public getChildInstance(name: string) {
+	public getChildInstance(name: string): Instance | undefined {
 		return this.instance.WaitForChild(name);
 	}
 
 	/** @returns The underlying Roblox `GuiObject`. */
-	public getInstance() {
+	public getInstance(): GuiObject {
 		return this.instance;
 	}
 }

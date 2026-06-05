@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/uiutils",
-  "version": "3.1.0",
+  "version": "3.1.2",
   "description": "A fluent GuiObject wrapper with tweens, opacity, events, and a global registry. Manage and access any UI instance from anywhere on the client.",
   "main": "out/UiUtils/init.lua",
   "scripts": {

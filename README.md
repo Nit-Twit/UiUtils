@@ -140,6 +140,12 @@ All tween methods default to `0.25s Cubic Out` and return the playing `Tween`.
 | `getChildInstance(name)` | `WaitForChild` wrapper                           |
 | `getInstance()`          | Returns the underlying `GuiObject`               |
 
+<!-- #### Misc
+
+| Method | Description |
+| ------ | ----------- |
+| `isInstanceOf()`  -->
+
 #### Events
 
 ```ts
@@ -164,6 +170,18 @@ You can control recursive opacity behavior with CollectionService tags:
 | -------------------- | ------------------------------------------------------------- |
 | `__uiutils.nofade`   | Excludes an instance and its descendants from opacity changes |
 | `__uiutils.fadethis` | Forces opacity on ImageButtons (background included)          |
+| `__uiutils.textOnly` | Fades only the text in a TextBox / TextLabel                  |
+
+---
+
+## Attributes
+
+You can control recursive opacity behavior with Attributes:
+
+| Attribute              | Effect                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| `__uiutils.minOpacity` | Sets the minimum opacity an Instance can have when fading in. Defaults to `0`  |
+| `__uiutils.maxOpacity` | Sets the maximum opacity an Instance can have when fading out. Defaults to `1` |
 
 ---
 
